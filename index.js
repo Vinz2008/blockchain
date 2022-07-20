@@ -1,24 +1,31 @@
 var clc = require("cli-color");
+const crypto = require('crypto');
 const SHA256 = require('crypto-js/sha256');
+const Swarm = require('discovery-swarm');
+const defaults = require('dat-swarm-defaults');
+const getPort = require('get-port');
+
+const channel = 'blockchain';
+
 
 global.isBlockFirst = false;
 class Block{
 	constructor(index,/*current_time,*/ data, PreviousHash=" "){
-	console.log("NEW BLOCK");
-	this.index = index;
-	console.log("index: ", this.index);
-	this.current_time = Date.now();
-	console.log("time: ", this.current_time);
-	this.data = data;
-	console.log("data: ", this.data);
-	this.PreviousHash = PreviousHash;
-	console.log("previous hash: ", this.PreviousHash);
-	this.hash = this.createHash();
-	console.log("hash: ", this.hash);
-	if (isBlockFirst == true){
-	global.hashFirstBlock = this.hash
-	isBlockFirst = false;
-	}
+		console.log("NEW BLOCK");
+		this.index = index;
+		console.log("index: ", this.index);
+		this.current_time = Date.now();
+		console.log("time: ", this.current_time);
+		this.data = data;
+		console.log("data: ", this.data);
+		this.PreviousHash = PreviousHash;
+		console.log("previous hash: ", this.PreviousHash);
+		this.hash = this.createHash();
+		console.log("hash: ", this.hash);
+		if (isBlockFirst == true){
+		global.hashFirstBlock = this.hash
+		isBlockFirst = false;
+		}
 	}
 	createHash() {
 		let hashCreated = SHA256(this.data + this.index + this.PreviousHash + this.current_time + JSON.stringify(this.data));
@@ -31,7 +38,17 @@ class BlockChain {
 		let firstBlockVar = this.createFirstBlock()
 		this.blockchain = [firstBlockVar]
 		console.log(firstBlockVar)
+		this.peers = {};
+		this.peerId = crypto.randomBytes(32);
+		console.log('peerId: ' + this.peerId.toString('hex'));
+		this.config = defaults({
+    			id: this.peerId,
+		});
+		const swarm = Swarm(this.config);
 	};
+	async connectBlockchain(){
+		
+	}
 	createFirstBlock() {
 		isBlockFirst = true
 		return new Block(0,"First Block", "0");
@@ -54,7 +71,6 @@ class BlockChain {
 		console.log("ERROR the previous hash is invalid in index " + i)
               return false
             }
-            
         }
         return true
     }
