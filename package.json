@@ -13,6 +13,7 @@
     "@erebos/swarm-node": "^0.13.0",
     "cli-color": "^2.0.1",
     "crypto-js": "^4.1.1",
+    "firebase": "^9.9.1",
     "get-port": "^5.1.1"
   }
 }
